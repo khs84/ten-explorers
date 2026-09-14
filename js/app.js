@@ -452,6 +452,7 @@
             onComplete();
           }, 300);
         } else {
+          playChime("stage");
           setTimeout(function () { playRound(roundIndex + 1); }, 600);
         }
       });

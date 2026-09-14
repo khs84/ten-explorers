@@ -27,61 +27,59 @@
     try { localStorage.setItem(STORAGE_KEY, on ? "1" : "0"); } catch (e) {}
   }
 
-  // 잔잔한 배경음악: 저음량 사인파 3화음이 천천히 코드를 바꿔가며 루프됩니다.
+  // 밝은 배경음악: 장조 화음을 뮤직박스처럼 통통 튀는 아르페지오로 잔잔하게 반복합니다.
+  function playMusicNote(freq, time, dur, peak) {
+    var c = ctx;
+    var o = c.createOscillator();
+    var g = c.createGain();
+    o.type = "triangle";
+    o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, time);
+    g.gain.linearRampToValueAtTime(peak, time + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, time + dur);
+    o.connect(g);
+    g.connect(musicGain);
+    o.start(time);
+    o.stop(time + dur + 0.05);
+  }
+
   function startMusic() {
     var c = getCtx();
     if (!c || musicNodes) return;
 
     musicGain = c.createGain();
-    musicGain.gain.setValueAtTime(0, c.currentTime);
-    musicGain.gain.linearRampToValueAtTime(0.05, c.currentTime + 2);
+    musicGain.gain.value = 1;
     musicGain.connect(c.destination);
 
+    // C - F - G - C 밝은 장조 진행, 각 화음을 위아래로 아르페지오
     var chords = [
-      [261.63, 329.63, 392.00],
-      [293.66, 349.23, 440.00],
-      [246.94, 293.66, 392.00],
-      [261.63, 329.63, 392.00]
+      [261.63, 329.63, 392.00, 523.25],
+      [349.23, 440.00, 523.25, 698.46],
+      [392.00, 493.88, 587.33, 783.99],
+      [261.63, 329.63, 392.00, 523.25]
     ];
-
-    var oscs = chords[0].map(function (freq) {
-      var o = c.createOscillator();
-      o.type = "sine";
-      o.frequency.value = freq;
-      var g = c.createGain();
-      g.gain.value = 0.3;
-      o.connect(g);
-      g.connect(musicGain);
-      o.start();
-      return { osc: o, gain: g };
+    var pattern = [0, 1, 2, 3, 2, 1];
+    var seq = [];
+    chords.forEach(function (chord) {
+      pattern.forEach(function (i) { seq.push(chord[i]); });
     });
 
-    var chordIndex = 0;
-    var timer = setInterval(function () {
-      chordIndex = (chordIndex + 1) % chords.length;
-      var freqs = chords[chordIndex];
-      oscs.forEach(function (pair, i) {
-        pair.osc.frequency.linearRampToValueAtTime(freqs[i], c.currentTime + 3.5);
-      });
-    }, 7000);
+    var noteInterval = 0.4;
+    var step = 0;
+    function scheduleNext() {
+      playMusicNote(seq[step % seq.length], c.currentTime, 0.5, 0.08);
+      step++;
+    }
+    scheduleNext();
+    var timer = setInterval(scheduleNext, noteInterval * 1000);
 
-    musicNodes = { oscs: oscs, timer: timer };
+    musicNodes = { timer: timer };
   }
 
   function stopMusic() {
     if (!musicNodes) return;
-    var c = ctx;
-    if (musicGain && c) {
-      musicGain.gain.linearRampToValueAtTime(0, c.currentTime + 0.6);
-    }
-    var nodes = musicNodes;
+    clearInterval(musicNodes.timer);
     musicNodes = null;
-    clearInterval(nodes.timer);
-    setTimeout(function () {
-      nodes.oscs.forEach(function (pair) {
-        try { pair.osc.stop(); } catch (e) {}
-      });
-    }, 700);
   }
 
   function setMusicOn(on) {

@@ -16,11 +16,35 @@
     });
   }
 
+  var cachedVoices = [];
+  function refreshVoices() {
+    if ("speechSynthesis" in window) cachedVoices = window.speechSynthesis.getVoices() || [];
+  }
+  if ("speechSynthesis" in window) {
+    refreshVoices();
+    window.speechSynthesis.onvoiceschanged = refreshVoices;
+  }
+  function pickKoreanVoice() {
+    var koVoices = cachedVoices.filter(function (v) {
+      return v.lang && v.lang.toLowerCase().indexOf("ko") === 0;
+    });
+    if (!koVoices.length) return null;
+    return (
+      koVoices.find(function (v) { return /google/i.test(v.name); }) ||
+      koVoices.find(function (v) { return /여|female|heami|sun-?hi|yuna|나연/i.test(v.name); }) ||
+      koVoices[koVoices.length - 1]
+    );
+  }
+
   function speak(text) {
     if (!("speechSynthesis" in window) || !text) return;
     try {
       var u = new SpeechSynthesisUtterance(text);
       u.lang = "ko-KR";
+      var voice = pickKoreanVoice();
+      if (voice) u.voice = voice;
+      u.pitch = 1.15;
+      u.rate = 0.95;
       window.speechSynthesis.cancel();
       window.speechSynthesis.speak(u);
     } catch (e) {}

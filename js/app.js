@@ -4,6 +4,8 @@
   var DATA = window.TEN_EXPLORERS_DATA;
   var STATIONS = DATA.stations;
   var STORAGE_KEY = "ten-explorers-v2";
+  var AUDIO = window.TEN_EXPLORERS_AUDIO;
+  function playChime(kind) { if (AUDIO) AUDIO.playChime(kind); }
 
   var liveRegion = document.getElementById("liveRegion");
   function announce(msg) {
@@ -505,6 +507,7 @@
               saveLocal();
               renderStamps();
               fireConfetti(20);
+              playChime("stage");
               setTimeout(function () {
                 renderTrail();
                 checkFinished();
@@ -519,6 +522,8 @@
               }, 600);
             }
           });
+          var speakBtn = body.querySelector(".speak-btn");
+          if (speakBtn) speakBtn.click();
           body.focus();
         }
       });
@@ -533,6 +538,7 @@
       state.finished = true;
       saveLocal();
       renderCelebrate();
+      playChime("final");
       announce("탐험 성공! 결과를 확인해 보세요.");
     }
   }
@@ -626,6 +632,32 @@
 
   document.getElementById("resetBtn").addEventListener("click", resetAll);
 
+  function introText() {
+    return DATA.meta.title + "에 오신 것을 환영해요. " +
+      "달걀, 나뭇잎, 과자, 별을 열 개씩 묶으며 " + DATA.meta.unitLabel + "를 배우는 탐험이에요. " +
+      "아래 미션 카드를 하나씩 눌러서 펼치고, 안내를 들은 다음 문제를 풀어 보세요. " +
+      "미션을 완료할 때마다 도장을 모을 수 있어요.";
+  }
+
+  function setupHeroControls() {
+    var introBtn = document.getElementById("introSpeakBtn");
+    if (introBtn) {
+      introBtn.addEventListener("click", function () { speak(introText()); });
+    }
+    var musicBtn = document.getElementById("musicToggleBtn");
+    if (musicBtn && AUDIO) {
+      var on = AUDIO.loadPref();
+      musicBtn.setAttribute("aria-pressed", on ? "true" : "false");
+      musicBtn.textContent = on ? "🎵 배경음악 끄기" : "🎵 배경음악";
+      musicBtn.addEventListener("click", function () {
+        var next = !AUDIO.isMusicOn();
+        AUDIO.setMusicOn(next);
+        musicBtn.setAttribute("aria-pressed", next ? "true" : "false");
+        musicBtn.textContent = next ? "🎵 배경음악 끄기" : "🎵 배경음악";
+      });
+    }
+  }
+
   function boot() {
     document.title = DATA.meta.title;
     document.getElementById("heroTitle").textContent = DATA.meta.title;
@@ -633,6 +665,7 @@
     document.getElementById("heroDesc").textContent =
       "달걀·나뭇잎·과자·별을 10개씩 묶으며 " + DATA.meta.unitLabel + "를 정복하는 탐험을 떠나요.";
 
+    setupHeroControls();
     state = loadLocal() || defaultState();
     renderStamps();
     renderTrail();

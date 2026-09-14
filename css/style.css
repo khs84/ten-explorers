@@ -1,13 +1,13 @@
 :root{
-  --paper:#F7EFD8;
-  --paper-panel:#FFFBF0;
+  --paper:#EFE2BA;
+  --paper-panel:#FFFFFF;
   --ink:#3A2E22;
   --ink-soft:#6B5C48;
   --trail:#2F7A5E;
   --trail-dark:#1F5A44;
   --gold:#E0A83B;
   --gold-ink:#7A5615;
-  --line:#D8C9A3;
+  --line:#B49B5E;
   --night:#1B2436;
   --shadow: 0 8px 20px -8px rgba(58,46,34,0.4);
   --egg:#F2C14E;      --egg-ink:#8A6412;
@@ -21,15 +21,15 @@
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --paper:#161C2C;
-    --paper-panel:#212A40;
+    --paper:#10141F;
+    --paper-panel:#2E3B5C;
     --ink:#F3E9D2;
     --ink-soft:#C9BCA0;
     --trail:#5FC79B;
     --trail-dark:#3E9C77;
     --gold:#F2C879;
     --gold-ink:#F6D998;
-    --line:#3B4867;
+    --line:#5B6F9E;
     --shadow: 0 10px 26px -8px rgba(0,0,0,0.6);
     --ok:#6FD9A8;
     --bad:#FF9686;
@@ -37,15 +37,15 @@
   }
 }
 :root[data-theme="dark"]{
-  --paper:#161C2C;
-  --paper-panel:#212A40;
+  --paper:#10141F;
+  --paper-panel:#2E3B5C;
   --ink:#F3E9D2;
   --ink-soft:#C9BCA0;
   --trail:#5FC79B;
   --trail-dark:#3E9C77;
   --gold:#F2C879;
   --gold-ink:#F6D998;
-  --line:#3B4867;
+  --line:#5B6F9E;
   --shadow: 0 10px 26px -8px rgba(0,0,0,0.6);
   --ok:#6FD9A8;
   --bad:#FF9686;
@@ -91,6 +91,15 @@ button{font-family:inherit;}
 .hero p{margin:0; color:var(--ink-soft); font-size:15px; max-width:44ch;}
 .hero .tagline{font-size:13px; color:var(--gold-ink); background:color-mix(in srgb, var(--gold) 24%, transparent); border-radius:999px; padding:5px 14px; font-weight:700;}
 
+.hero-controls{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:4px;}
+.hero-btn{
+  display:inline-flex; align-items:center; gap:6px; min-height:40px; padding:8px 16px;
+  border-radius:999px; border:2px solid var(--line); background:var(--paper-panel); color:var(--ink);
+  font-size:13px; font-weight:700; cursor:pointer; transition:border-color .15s ease, background .15s ease;
+}
+.hero-btn:hover{border-color:var(--trail);}
+.hero-btn[aria-pressed="true"]{background:color-mix(in srgb, var(--trail) 22%, var(--paper-panel)); border-color:var(--trail-dark); color:var(--trail-dark);}
+
 /* ---------- Progress strip ---------- */
 .stamps{display:flex; justify-content:center; gap:10px; flex-wrap:wrap; list-style:none; margin:0; padding:0;}
 .stampslot{
@@ -119,7 +128,7 @@ button{font-family:inherit;}
 .station.done .station-badge{border-color:var(--ok);}
 
 .card{
-  background:var(--paper-panel); border:1px solid var(--line); border-radius:18px;
+  background:var(--paper-panel); border:2px solid var(--line); border-radius:18px;
   box-shadow:var(--shadow); overflow:hidden;
 }
 .station-heading{margin:0;}
@@ -177,7 +186,7 @@ button{font-family:inherit;}
 .egg-scene{display:flex; flex-wrap:wrap; gap:22px; align-items:flex-end; margin-bottom:6px;}
 .carton{
   display:grid; grid-template-columns:repeat(5,1fr); gap:6px; padding:10px; border-radius:14px;
-  background:color-mix(in srgb, var(--egg) 14%, var(--paper)); border:2px solid var(--egg-ink);
+  background:color-mix(in srgb, var(--egg) 40%, var(--paper-panel)); border:3px solid var(--egg-ink);
 }
 .carton-label{font-size:11px; text-align:center; color:var(--ink); font-weight:700; margin-bottom:4px; grid-column:1/-1;}
 .egg{width:30px; height:38px; background:var(--egg); border:2px solid var(--egg-ink); border-radius:50% 50% 50% 50% / 62% 62% 42% 42%;}
@@ -189,8 +198,9 @@ button{font-family:inherit;}
 .tree{position:relative; width:100%; max-width:340px;}
 .trunk{width:26px; height:54px; background:var(--cookie-ink); margin:0 auto; border-radius:4px;}
 .canopy{
-  display:flex; flex-wrap:wrap; justify-content:center; gap:8px; padding:14px; border:none;
-  background:color-mix(in srgb, var(--leaf) 12%, var(--paper)); border-radius:50% / 30%; margin-bottom:-8px;
+  display:flex; flex-wrap:wrap; justify-content:center; gap:8px; padding:14px;
+  background:color-mix(in srgb, var(--leaf) 38%, var(--paper-panel)); border:3px solid var(--leaf-ink);
+  border-radius:50% / 30%; margin-bottom:-8px;
 }
 .leaf{
   width:44px; height:44px; border-radius:0 100% 0 100%; transform:rotate(45deg) rotate(var(--r,0deg));
@@ -205,10 +215,10 @@ button{font-family:inherit;}
 /* cookie stage */
 .tray{
   display:grid; grid-template-columns:repeat(5,1fr); gap:8px; padding:14px; margin-bottom:12px;
-  background:color-mix(in srgb, var(--cookie) 14%, var(--paper)); border:2px dashed var(--cookie-ink); border-radius:16px;
+  background:color-mix(in srgb, var(--cookie) 40%, var(--paper-panel)); border:3px dashed var(--cookie-ink); border-radius:16px;
   max-width:300px;
 }
-.slot{width:44px; height:44px; border-radius:50%; border:2px dashed color-mix(in srgb, var(--cookie-ink) 50%, transparent); display:flex; align-items:center; justify-content:center;}
+.slot{width:44px; height:44px; border-radius:50%; border:2px dashed color-mix(in srgb, var(--cookie-ink) 80%, transparent); background:var(--paper-panel); display:flex; align-items:center; justify-content:center;}
 .cookie{
   width:38px; height:38px; border-radius:50%; background-color:var(--cookie);
   background-image:
